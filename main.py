@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+from pathlib import Path
 from typing import List, Dict, Optional
 from urllib.parse import urljoin
 from fastapi import FastAPI, HTTPException, BackgroundTasks
@@ -24,14 +26,21 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Get the base directory
+BASE_DIR = Path(__file__).resolve().parent
+
 app = FastAPI(
     title="Referral Agent API",
     description="AI-powered job monitoring agent that tracks career pages and notifies you of new opportunities",
     version="2.0.0"
 )
 
-# Mount static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# Mount static files (check if directory exists)
+static_dir = BASE_DIR / "static"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+else:
+    logger.warning(f"Static directory not found at {static_dir}")
 
 
 # Pydantic models for API
@@ -64,8 +73,11 @@ def get_llm():
 @app.get("/", response_class=HTMLResponse)
 def serve_dashboard():
     """Serve the frontend dashboard."""
-    with open("templates/index.html", "r") as f:
-        return HTMLResponse(content=f.read())
+    template_path = BASE_DIR / "templates" / "index.html"
+    if template_path.exists():
+        with open(template_path, "r") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h1>Referral Agent API</h1><p>Dashboard not available. API is running.</p>")
 
 
 @app.get("/api/status")

@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, firestore
 
 # Load environment variables from .env file
 load_dotenv()
@@ -38,3 +38,6 @@ def initialize_firebase():
 
 # Initialize Firebase on module import
 initialize_firebase()
+
+# Export Firestore client
+db = firestore.client()
