@@ -534,8 +534,13 @@ function switchView(view) {
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.querySelector(`[data-view="${view}"]`)?.classList.add('active');
     
+    // Also update header tabs
+    document.querySelectorAll('.header-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`.header-tab[data-view="${view}"]`)?.classList.add('active');
+    
     document.querySelectorAll('.view-section').forEach(s => s.style.display = 'none');
-    document.getElementById(`${view}-section`)?.style.display = 'block';
+    const section = document.getElementById(`${view}-section`);
+    if (section) section.style.display = 'block';
 }
 
 // Toast
