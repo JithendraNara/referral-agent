@@ -89,12 +89,13 @@ async function loadData() {
 
 // Health Check
 async function loadHealth() {
+    const dot = document.getElementById('status-dot');
+    const text = document.getElementById('status-text');
+    
     try {
         const res = await fetch(`${API}/health`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        
-        const dot = document.getElementById('status-dot');
-        const text = document.getElementById('status-text');
         
         if (data.status === 'healthy') {
             dot.classList.remove('error');
@@ -107,6 +108,8 @@ async function loadHealth() {
         document.getElementById('stats-targets').textContent = data.checks?.active_targets || 0;
     } catch (err) {
         console.error('Health check failed:', err);
+        dot.classList.add('error');
+        text.textContent = 'Connection Failed';
     }
 }
 
