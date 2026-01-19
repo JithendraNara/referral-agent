@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+crewai
+crewai-tools
+langchain_google_genai
+firebase-admin
+python-dotenv
+pydantic
+httpx

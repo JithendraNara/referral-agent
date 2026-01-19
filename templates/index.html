@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Agent Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>
+            <span>🎯</span>
+            Referral Agent Dashboard
+        </h1>
+        <div class="health-badge">
+            <div id="health-dot" class="health-dot"></div>
+            <span id="health-text">Checking...</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="icon">🎯</div>
+                <div class="value" id="stats-targets">-</div>
+                <div class="label">Active Targets</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">💼</div>
+                <div class="value" id="stats-jobs">-</div>
+                <div class="label">Jobs Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">✨</div>
+                <div class="value" id="stats-new">-</div>
+                <div class="label">New Today</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🕐</div>
+                <div class="value" id="stats-last">-</div>
+                <div class="label">Last Check</div>
+            </div>
+        </div>
+
+        <!-- Targets Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2>🏢 Target Companies</h2>
+                <div style="display: flex; gap: 0.75rem;">
+                    <button class="btn btn-success" onclick="runJobCheck()">
+                        🔍 Run Check Now
+                    </button>
+                    <button class="btn btn-primary" onclick="openModal()">
+                        ➕ Add Target
+                    </button>
+                </div>
+            </div>
+            <div class="section-content">
+                <div id="targets-grid" class="targets-grid">
+                    <div class="skeleton" style="height: 150px;"></div>
+                    <div class="skeleton" style="height: 150px;"></div>
+                    <div class="skeleton" style="height: 150px;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Jobs Section -->
+        <section class="section">
+            <div class="section-header">
+                <h2>💼 Found Jobs</h2>
+                <button class="btn btn-outline" onclick="loadJobs()">
+                    🔄 Refresh
+                </button>
+            </div>
+            <div class="section-content" style="padding: 0;">
+                <table class="jobs-table">
+                    <thead>
+                        <tr>
+                            <th>Job</th>
+                            <th>Location</th>
+                            <th>Found</th>
+                            <th>Link</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jobs-table-body">
+                        <tr>
+                            <td colspan="5">
+                                <div class="skeleton" style="height: 40px; margin: 0.5rem 0;"></div>
+                                <div class="skeleton" style="height: 40px; margin: 0.5rem 0;"></div>
+                                <div class="skeleton" style="height: 40px; margin: 0.5rem 0;"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Target Modal -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Add Target</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="target-form">
+                    <input type="hidden" id="target-id">
+                    
+                    <div class="form-group">
+                        <label for="company-name">Company Name</label>
+                        <input 
+                            type="text" 
+                            id="company-name" 
+                            placeholder="e.g., Stripe"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="careers-url">Careers Page URL</label>
+                        <input 
+                            type="url" 
+                            id="careers-url" 
+                            placeholder="https://stripe.com/jobs"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="role-keyword">Role Keyword</label>
+                        <input 
+                            type="text" 
+                            id="role-keyword" 
+                            placeholder="e.g., software engineer"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="target-active">Status</label>
+                        <select id="target-active">
+                            <option value="true">Active</option>
+                            <option value="false">Paused</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-outline" onclick="closeModal()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            💾 Save Target
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

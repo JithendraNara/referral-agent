@@ -1,0 +1,67 @@
+# Cloud Build configuration for CI/CD
+# Triggers on push to main branch
+
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/referral-agent:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/referral-agent:latest'
+      - '.'
+    id: 'build'
+
+  # Push the Docker image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/referral-agent:$COMMIT_SHA'
+    id: 'push-sha'
+    waitFor: ['build']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/referral-agent:latest'
+    id: 'push-latest'
+    waitFor: ['build']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'referral-agent'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/referral-agent:$COMMIT_SHA'
+      - '--region'
+      - 'us-central1'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'  # Allow public access for the dashboard
+      - '--memory'
+      - '512Mi'
+      - '--timeout'
+      - '300s'
+      - '--min-instances'
+      - '0'
+      - '--max-instances'
+      - '1'
+    id: 'deploy'
+    waitFor: ['push-sha']
+
+# Store images in Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/referral-agent:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/referral-agent:latest'
+
+# Build options
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'
+
+# Timeout for the entire build
+timeout: '1200s'
