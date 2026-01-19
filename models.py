@@ -11,6 +11,7 @@ class JobListing(BaseModel):
     title: str = Field(..., description="Job title")
     url: str = Field(..., description="URL to the job posting")
     location: str = Field(default="Not specified", description="Job location")
+    posted_date: Optional[str] = Field(default=None, description="Date the job was posted (e.g., '01/15/2026', 'Jan 15', '2 days ago')")
     
     class Config:
         extra = "allow"  # Allow additional fields from LLM

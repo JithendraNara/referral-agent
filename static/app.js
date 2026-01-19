@@ -186,6 +186,8 @@ function renderJobs() {
             ? new Date(job.found_at._seconds * 1000)
             : new Date(job.found_at);
         
+        const postedDate = job.posted_date || 'N/A';
+        
         return `
             <tr>
                 <td>
@@ -193,7 +195,10 @@ function renderJobs() {
                     <div class="job-company">${escapeHtml(job.company_name || 'Unknown Company')}</div>
                 </td>
                 <td>${escapeHtml(job.location || 'N/A')}</td>
-                <td class="job-date">${formatDate(foundDate)}</td>
+                <td class="job-date">
+                    <div>${escapeHtml(postedDate)}</div>
+                    <div style="font-size: 0.65rem; color: var(--text-secondary);">Found: ${formatDate(foundDate)}</div>
+                </td>
                 <td>
                     <a href="${escapeHtml(job.url)}" target="_blank" rel="noopener">
                         View Job →

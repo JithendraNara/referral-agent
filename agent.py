@@ -15,16 +15,18 @@ Example Input (Raw HTML snippet):
 <div class="job-card">
   <h3><a href="/careers/swe-123">Senior Software Engineer</a></h3>
   <span class="location">San Francisco, CA</span>
+  <span class="date">01/15/2026</span>
 </div>
 <div class="job-listing">
   <a href="https://boards.greenhouse.io/company/jobs/456">ML Engineer</a>
   <p>New York, NY</p>
+  <time>Posted 2 days ago</time>
 </div>
 
 Example Output:
 [
-  {"title": "Senior Software Engineer", "url": "/careers/swe-123", "location": "San Francisco, CA"},
-  {"title": "ML Engineer", "url": "https://boards.greenhouse.io/company/jobs/456", "location": "New York, NY"}
+  {"title": "Senior Software Engineer", "url": "/careers/swe-123", "location": "San Francisco, CA", "posted_date": "01/15/2026"},
+  {"title": "ML Engineer", "url": "https://boards.greenhouse.io/company/jobs/456", "location": "New York, NY", "posted_date": "2 days ago"}
 ]
 
 IMPORTANT URL RULES:
@@ -96,12 +98,14 @@ def find_jobs(target: Dict[str, Any], llm) -> List[Dict]:
         - "title": The job title (string)
         - "url": The ACTUAL job URL from the href attribute - NOT button text like "Apply Now" (string)  
         - "location": The job location, or "Remote" or "Not specified" (string)
+        - "posted_date": When the job was posted - look for dates like "01/15/2026", "Jan 15", "2 days ago", "Posted yesterday" (string or null)
         
         {FEW_SHOT_EXAMPLES}
         
         CRITICAL RULES:
         - The "url" field MUST be a real URL path (like "/jobs/123" or "https://..."), NOT button text
         - If a job's link text says "Apply Now" but href="/careers/job-456", use "/careers/job-456" as the url
+        - Extract the posting date if visible - check for date patterns, "Posted X days ago", timestamps, etc.
         - Return ONLY the JSON array, no explanation or markdown
         - If no matching jobs found, return: []
         - Include partial matches (e.g., "ML Engineer" matches "Engineer")
