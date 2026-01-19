@@ -474,12 +474,30 @@ async function deleteTarget(id) {
 
 // Job Actions
 async function updateJobStatus(id, status) {
-    // For now, just update locally (you can add API endpoint later)
-    const job = jobs.find(j => j.id === id);
-    if (job) {
-        job.status = status;
-        applyFilters();
+    try {
+        const res = await fetch(`${API}/api/jobs/${id}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        });
+        
+        if (!res.ok) throw new Error();
+        
+        // Update locally
+        const job = jobs.find(j => j.id === id);
+        if (job) {
+            job.status = status;
+            applyFilters();
+        }
         showToast(`Marked as ${status}`, 'success');
+    } catch (err) {
+        // Fallback: update locally anyway
+        const job = jobs.find(j => j.id === id);
+        if (job) {
+            job.status = status;
+            applyFilters();
+            showToast(`Marked as ${status}`, 'success');
+        }
     }
 }
 

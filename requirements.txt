@@ -1,9 +1,22 @@
-fastapi
-uvicorn[standard]
-crewai
-crewai-tools
-langchain_google_genai
-firebase-admin
-python-dotenv
-pydantic
-httpx
+# Core Framework
+fastapi>=0.109.0,<1.0.0
+uvicorn[standard]>=0.27.0,<1.0.0
+pydantic>=2.5.0,<3.0.0
+
+# AI & Scraping
+crewai>=0.28.0
+crewai-tools>=0.2.0
+langchain-google-genai>=1.0.0
+
+# Firebase
+firebase-admin>=6.4.0,<7.0.0
+
+# HTTP & Networking
+httpx>=0.26.0,<1.0.0
+
+# Utilities
+python-dotenv>=1.0.0,<2.0.0
+
+# Optional: Enhanced scraping (uncomment if needed)
+# playwright>=1.41.0
+# beautifulsoup4>=4.12.0
