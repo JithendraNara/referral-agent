@@ -44,11 +44,24 @@ function initApp() {
         });
     });
 
-    // Navigation
+    // Navigation - Sidebar
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', () => {
             const view = item.dataset.view;
             if (view) switchView(view);
+        });
+    });
+    
+    // Navigation - Header tabs (mobile)
+    document.querySelectorAll('.header-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            const view = tab.dataset.view;
+            if (view) {
+                switchView(view);
+                // Update header tabs active state
+                document.querySelectorAll('.header-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            }
         });
     });
 
