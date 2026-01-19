@@ -16,9 +16,22 @@ Example Input (Raw HTML snippet):
   <h3><a href="/careers/swe-123">Senior Software Engineer</a></h3>
   <span class="location">San Francisco, CA</span>
 </div>
+<div class="job-listing">
+  <a href="https://boards.greenhouse.io/company/jobs/456">ML Engineer</a>
+  <p>New York, NY</p>
+</div>
 
 Example Output:
-[{"title": "Senior Software Engineer", "url": "/careers/swe-123", "location": "San Francisco, CA"}]
+[
+  {"title": "Senior Software Engineer", "url": "/careers/swe-123", "location": "San Francisco, CA"},
+  {"title": "ML Engineer", "url": "https://boards.greenhouse.io/company/jobs/456", "location": "New York, NY"}
+]
+
+IMPORTANT URL RULES:
+- The URL must be an actual link (href attribute), NOT button text like "Apply Now" or "View Job"
+- Look for <a href="..."> tags to find the real URLs
+- Relative URLs like "/jobs/123" are fine
+- If you can't find a proper URL, construct one from the base URL + job ID
 """
 
 
@@ -81,12 +94,14 @@ def find_jobs(target: Dict[str, Any], llm) -> List[Dict]:
         OUTPUT FORMAT (strict JSON, no markdown):
         Return a JSON array. Each object must have exactly these fields:
         - "title": The job title (string)
-        - "url": The job URL - can be relative like "/careers/123" (string)  
+        - "url": The ACTUAL job URL from the href attribute - NOT button text like "Apply Now" (string)  
         - "location": The job location, or "Remote" or "Not specified" (string)
         
         {FEW_SHOT_EXAMPLES}
         
-        IMPORTANT:
+        CRITICAL RULES:
+        - The "url" field MUST be a real URL path (like "/jobs/123" or "https://..."), NOT button text
+        - If a job's link text says "Apply Now" but href="/careers/job-456", use "/careers/job-456" as the url
         - Return ONLY the JSON array, no explanation or markdown
         - If no matching jobs found, return: []
         - Include partial matches (e.g., "ML Engineer" matches "Engineer")
